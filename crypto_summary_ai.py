@@ -1,3 +1,7 @@
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from google import genai
 import gspread
 from google.oauth2.service_account import Credentials
@@ -36,7 +40,7 @@ Ethereum change: {eth_change: .2f} USD
 Write a short 2-sentence summery of describing today's crypto trend.
 """
 
-client_ai = genai.Client(api_key="AIzaSyAD3wQTHhvNGjq2DViwOBKMYf8zGT2NMrI")
+client_ai = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 response = client_ai.models.generate_content(
     model="gemini-2.5-flash",
     contents=[prompt]
