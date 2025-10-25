@@ -1,5 +1,11 @@
+from google import genai
+import gspread
+from google.oauth2.service_account import Credentials
+import pandas as pd
+from datetime import datetime
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 
 from google import genai
@@ -14,9 +20,25 @@ SCOPES = [
 
 creds = Credentials.from_service_account_file("weather-creds.json", scopes=SCOPES)
 client = gspread.authorize(creds)
-sheet = client.open("CryptoData").sheet1
 
-records = sheet.get_all_records()
+crypto_data_sheet = client.open_by_key("1CXHaet9QS5Y2vgLDcnwamhZmjimmb2L8h03rEVv-v1c").sheet1
+insight_spreadsheet = client.open_by_key("16EDG5qbgpUUhLOkGtaxYmEtZoMTbb0MXf4NgsEbcIvY")
+try:
+    insight_sheet = insight_spreadsheet.worksheet("AI_Insights")
+except gspread.exceptions.WorksheetNotFound:
+    insight_sheet = insight_spreadsheet.add_worksheet(title="AI_Insights", rows="100", cols="5")
+
+insight_sheet.update_title("AI_Insights")
+insight_spreadsheet.batch_update({
+    "requests": [
+        {"updateSheetProperties": {
+            "properties": {"sheetId": insight_sheet.id, "index": 0},
+            "fields": "index"
+        }}
+    ]
+})
+
+records = crypto_data_sheet.get_all_records()
 df = pd.DataFrame(records)
 
 if df.empty:
@@ -26,11 +48,13 @@ if df.empty:
 latest = df.iloc[-1]
 prev = df.iloc[-2] if len(df) > 1 else df.iloc[-1]
 
+btc = float(latest["BTC (USD)"])
+eth = float(latest["ETH (USD)"])
 btc_change = latest["BTC (USD)"] - prev["BTC (USD)"]
 eth_change = latest["ETH (USD)"] - prev["ETH (USD)"]
 
 prompt = f"""
-Here is the recent crypto data:
+Recent crypto data:
 
 {df.tail(5).to_string(index=False)}
 
@@ -46,7 +70,18 @@ response = client_ai.models.generate_content(
     contents=[prompt]
 )
 
+summery = response.text.strip()
+
 print("🧠 Gemini Summary:")
 print(response.text)
 
+timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+print(f"➡️ Writing to sheet: {insight_sheet.title} in {insight_spreadsheet.title}")
+insight_sheet.append_row([timestamp, float(btc), float(eth), summery])
+print(f"✅ Logged summary to AI_Insights at {timestamp}.")
 
+print("🧩 Writing to spreadsheet URL:")
+print(insight_spreadsheet.url)
+
+print("🧩 Worksheet URL:")
+print(insight_sheet.url)
