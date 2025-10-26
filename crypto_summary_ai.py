@@ -4,9 +4,10 @@ from google.oauth2.service_account import Credentials
 import pandas as pd
 from datetime import datetime
 import os
-from dotenv import load_dotenv
+os.chdir("/Users/zautt/Desktop/Python Projects/api_pratcie/api-integrations")
 
-load_dotenv()
+from dotenv import load_dotenv
+load_dotenv(dotenv_path="/Users/zautt/Desktop/Python Projects/api_pratcie/api-integrations/.env")
 
 from google import genai
 import gspread
