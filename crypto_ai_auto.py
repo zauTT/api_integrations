@@ -2,14 +2,20 @@ import schedule
 import time
 import subprocess
 
-def run_summery():
-    print("🔄 Running crypto_summary_ai.py...")
+def run_pipeline():
+    print("\n🔁 Starting full crypto + AI summary pipeline...")
+
+    print("💰 Fetching latest crypto prices...")
+    subprocess.run(["python3", "crypto_auto.py"])
+
+    print("🧠 Generating AI summary...")
     subprocess.run(["python3", "crypto_summary_ai.py"])
 
-schedule.every(6).hours.do(run_summery)
+    print("✅ Pipeline completed.\n")
 
-print("✅ Crypto AI auto-summery started (runs every 6 hours)")
-run_summery()
+run_pipeline()
+
+schedule.every(6).hours.do(run_pipeline)
 
 while True:
     schedule.run_pending()

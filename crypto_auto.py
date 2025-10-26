@@ -2,6 +2,10 @@ import schedule
 import time
 import subprocess
 
+from dotenv import load_dotenv
+import os
+load_dotenv(dotenv_path="/Users/zautt/Desktop/Python Projects/api_pratcie/api-integrations/.env")
+
 def run_crypto():
     print("🔄 Running crypto_to_sheets.py...")
 
