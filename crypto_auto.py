@@ -20,7 +20,7 @@ def run_crypto():
                 print("❌ All attempts failed. Please check the script for issues. Will retry in the next scheduled run.\n")
 
 
-schedule.every(1).minutes.do(run_crypto)
+schedule.every(30).minutes.do(run_crypto)
 
 print("✅ Crypto auto-logger started (runs every 30 minutes)")
 while True:
