@@ -4,6 +4,7 @@ import subprocess
 
 from dotenv import load_dotenv
 import os
+os.chdir("/Users/zautt/Desktop/Python Projects/api_pratcie/api-integrations")
 load_dotenv(dotenv_path="/Users/zautt/Desktop/Python Projects/api_pratcie/api-integrations/.env")
 
 def run_crypto():
