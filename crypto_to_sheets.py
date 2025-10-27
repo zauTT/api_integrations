@@ -2,6 +2,8 @@ import requests
 import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime
+import os
+os.chdir("/Users/zautt/Desktop/Python Projects/api_pratcie/api-integrations")
 
 url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd"
 response = requests.get(url)
